@@ -1,4 +1,5 @@
 #* @vtlvariable name="om" type="org.nrg.xdat.om.XnatImagesessiondata" *#
+#* @vtlvariable name="siteConfig" type="org.nrg.xdat.preferences.SiteConfigPreferences" *#
 <!-- BEGIN /templates/screens/xnat_imageSessionData/actionsBox/ViewInOHIFViewer.vm -->
 <!-- Sequence: 6 -->
 <li class="yuimenuitem">
@@ -10,14 +11,12 @@
       checkIfSessionJSON(e);
     });
 
+    const rootUrl = "${siteConfig.siteUrl}";
+    console.log(`Root URL for viewer: ${rootUrl}`);
+
     var jsonRequestUrl;
 
     function checkIfSessionJSON(e) {
-      var rootUrl = XNAT.url.fullUrl('').replace(/\/+$/, "");
-
-      console.log(rootUrl);
-      console.log("TEST");
-
       e.preventDefault();
 
       // JPETTS: Define a request to XNAT to check if specified JSON data exists
@@ -66,8 +65,6 @@
     }
 
     function openViewer() {
-      const rootUrlWithPort = XNAT.url.getProtocol() + '//' + XNAT.url.getDomain() + ":" + XNAT.url.getPort() + XNAT.url.rootUrl('').replace(/\/+$/, "");
-
       opts = {
         title: 'OHIF Viewer - Study: $om.label',
         ok: false,
@@ -80,9 +77,11 @@
       };
 
 
-      jsonRequestUrl = `${rootUrlWithPort}/xapi/viewer/$om.id`;
+      jsonRequestUrl = `${rootUrl}/xapi/viewer/$om.id`;
+      var viewerUrl = `${rootUrl}/VIEWER/`;
       console.log(`ViewInOHIFViewer.vm: jsonRequestUrl: ${jsonRequestUrl}`);
-      xmodal.iframe(`${rootUrlWithPort}/VIEWER/`, opts);
+      console.log(`Loading iframe from: ${viewerUrl}`);
+      xmodal.iframe(viewerUrl, opts);
     }
 
     function generateJSONthenOpenViewer(e, rootUrl) {
@@ -128,6 +127,5 @@
       oReq.send();
       alert("Generating viewer metadata for experiment \"$om.label\" for the first time. If the study is very large please wait a minute before attempting to open the viewer. This will only happen once per experiment.");
     }
-
-
 </script>
+<!-- END /templates/screens/xnat_imageSessionData/actionsBox/ViewInOHIFViewer.vm -->
